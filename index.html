@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Basecamp AI</title>
+
+    <!-- Google Analytics 4 — Replace G-SQDG1WXS92 with your Measurement ID from GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SQDG1WXS92"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SQDG1WXS92');
+    </script>
+
+    <!-- Microsoft Clarity — Replace XXXXXXXXXX with your Clarity Project ID -->
+    <script>
+        (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window,document,"clarity","script","w1wdxf9e9g");
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-warm: #FAF8F5; --bg-card: #FFFFFF; --bg-highlight: #F0EDE8; --bg-accent-soft: #E8E4DD;
+            --text-primary: #1A1815; --text-secondary: #6B6560; --text-tertiary: #9B9590;
+            --accent: #C47035; --accent-soft: #E8985A; --accent-bg: #FDF5ED;
+            --border: #E5E0DA; --border-light: #F0EDE8;
+            --success: #4A8C6F; --success-bg: #EDF7F1; --info: #5A7BAA; --info-bg: #EDF2F8;
+            --shadow-sm: 0 1px 3px rgba(26,24,21,0.06); --shadow-md: 0 4px 12px rgba(26,24,21,0.08);
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-warm); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .tooltip-trigger { border-bottom: 1.5px dotted var(--accent); color: var(--text-primary); cursor: help; position: relative; font-weight: 500; }
+        .tooltip-popup { position: fixed; background: var(--text-primary); color: #fff; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; max-width: 280px; z-index: 10000; pointer-events: none; box-shadow: var(--shadow-md); animation: tooltipIn 0.15s ease; }
+        @keyframes tooltipIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-60px) rotate(360deg); opacity: 0; } }
+        .animate-in { animation: fadeInUp 0.4s ease forwards; }
+        .animate-fade { animation: fadeIn 0.3s ease forwards; }
+        .progress-bar-track { height: 3px; background: var(--border-light); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .progress-bar-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; border-radius: 0 2px 2px 0; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .search-overlay { position: fixed; inset: 0; background: rgba(26,24,21,0.5); z-index: 9000; display: flex; align-items: flex-start; justify-content: center; padding-top: 80px; }
+        .search-box { background: var(--bg-card); border-radius: var(--radius-lg); width: 90%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden; }
+        .search-input { width: 100%; padding: 18px 20px 18px 48px; border: none; font-size: 16px; font-family: inherit; background: transparent; outline: none; }
+        .search-results { max-height: 360px; overflow-y: auto; border-top: 1px solid var(--border-light); }
+        .search-result { padding: 14px 20px; cursor: pointer; border-bottom: 1px solid var(--border-light); transition: background 0.15s; }
+        .search-result:hover { background: var(--bg-highlight); }
+        .progress-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.3s; }
+        .progress-dot.active { background: var(--accent); transform: scale(1.3); }
+        .progress-dot.completed { background: var(--success); }
+        .progress-dot.pending { background: var(--border); }
+        .stat-number { font-size: 32px; font-weight: 700; font-family: 'Source Serif 4', serif; color: var(--accent); }
+    </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+// ===== SVG ICONS =====
+const Icons = {
+    understand: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="16" cy="16" r="7" stroke={color} strokeWidth="1.5"/>
+            <circle cx="16" cy="16" r="2.5" fill={color}/>
+            <path d="M16 9v2M16 21v2M9 16h2M21 16h2" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    myths: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M13 10v12l8-6-8-6z" fill={color} opacity="0.2" stroke={color} strokeWidth="1.5" strokeLinejoin="round"/>
+        </svg>
+    ),
+    apply: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M10 16l4 4 8-8" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    ),
+    setup: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M12 12h8v8h-8z" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M15 9v3M20 15h3M17 23v-3M9 17h3" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    glossary: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M10 11h12M10 16h8M10 21h10" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    connect: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="12" cy="16" r="3" stroke={color} strokeWidth="1.5"/>
+            <circle cx="20" cy="16" r="3" stroke={color} strokeWidth="1.5"/>
+            <path d="M15 16h2" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    ask: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="16" cy="16" r="8" stroke={color} strokeWidth="1.5"/>
+            <path d="M13 13a3 3 0 014.5 2.5c0 1.5-1.5 1.5-1.5 3" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+            <circle cx="16" cy="22" r="0.8" fill={color}/>
+        </svg>
+    ),
+    search: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <circle cx="15" cy="15" r="5" stroke={color} strokeWidth="1.5"/>
+            <path d="M19 19l4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    brain: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="16" cy="14" r="5" fill={color} opacity="0.2" stroke={color} strokeWidth="1.5"/>
+            <path d="M12 22c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    doc: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <rect x="9" y="8" width="14" height="16" rx="2" stroke={color} strokeWidth="1.5"/>
+            <path d="M13 14h6M13 18h4" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    chat: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M9 10h10a2 2 0 012 2v6a2 2 0 01-2 2H13l-4 3V10z" stroke={color} strokeWidth="1.5" fill={color} opacity="0.1"/>
+        </svg>
+    ),
+    target: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="16" cy="16" r="7" stroke={color} strokeWidth="1.5"/>
+            <circle cx="16" cy="16" r="3" stroke={color} strokeWidth="1.5"/>
+            <circle cx="16" cy="16" r="1" fill={color}/>
+        </svg>
+    ),
+    scale: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="12" cy="16" r="4" stroke={color} strokeWidth="1.5"/>
+            <path d="M18 12h6M18 16h6M18 20h6" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    industry: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M8 24V14l6-4v4l6-4v14H8z" stroke={color} strokeWidth="1.5" fill={color} opacity="0.1" strokeLinejoin="round"/>
+        </svg>
+    ),
+    hierarchy: (color = "#C47035", size = 24) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <circle cx="16" cy="10" r="3" stroke={color} strokeWidth="1.5"/>
+            <circle cx="10" cy="22" r="3" stroke={color} strokeWidth="1.5"/>
+            <circle cx="22" cy="22" r="3" stroke={color} strokeWidth="1.5"/>
+            <path d="M14.5 12.5L11.5 19.5M17.5 12.5L20.5 19.5" stroke={color} strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+    ),
+    back: (color = "#6B6560", size = 20) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 8l-8 8 8 8"/></svg>
+    ),
+    forward: (color = "#6B6560", size = 20) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8l8 8-8 8"/></svg>
+    ),
+    copy: (color = "#fff", size = 14) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="10" y="10" width="16" height="16" rx="2"/><path d="M6 22V8a2 2 0 012-2h14"/></svg>
+    ),
+    check: (color = "#fff", size = 14) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M8 16l6 6 10-10"/></svg>
+    ),
+    share: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="20" cy="8" r="3"/><circle cx="8" cy="16" r="3"/><circle cx="20" cy="24" r="3"/>
+            <path d="M11 17.5l6 5M11 14.5l6-5"/>
+        </svg>
+    ),
+    bookmark: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M10 8h12v18l-6-4-6 4V8z" stroke={color} strokeWidth="1.5" fill={color} opacity="0.1"/>
+        </svg>
+    ),
+    surprise: (color = "#C47035", size = 16) => (
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="4" width="24" height="24" rx="6" fill={color} opacity="0.1"/>
+            <path d="M16 9v8" stroke={color} strokeWidth="2.5" strokeLinecap="round"/>
+            <circle cx="16" cy="22" r="1.5" fill={color}/>
+        </svg>
+    ),
+};
+
+// ===== DATA =====
+const GLOSSARY = {
+    "GenAI": "Generative AI: technology that creates new content (text, images, code) rather than just analyzing existing data. Think of it as AI that produces, not just processes.",
+    "LLM": "Large Language Model: the engine behind tools like ChatGPT and Claude. Trained on vast amounts of text to understand and generate human-like language.",
+    "Model": "The trained AI 'brain' that powers a tool. Different models have different strengths. Some are better at reasoning, others at speed. Think of it like different car engines.",
+    "Token": "How AI measures text, roughly three-quarters of a word. When a tool has a 'token limit' it means there is a cap on how much text it can process at once. A page of text is about 400 tokens.",
+    "Prompt": "The instruction or question you give to an AI tool. Better prompts lead to better results. It is the skill that makes the biggest difference in your output quality.",
+    "Context window": "How much information an AI can 'hold in mind' at once. A larger context window means it can work with longer documents or remember more of your conversation.",
+    "API": "Application Programming Interface: a way for software to talk to AI directly without a chat interface. Developers use APIs to build AI into their own apps.",
+    "Fine-tuning": "Customizing an AI model with your own data so it becomes specialized for your specific needs. Like training a general doctor to become a specialist.",
+    "Hallucination": "When AI generates information that sounds confident but is factually wrong. This is why you should always verify important facts from AI outputs.",
+    "Reasoning": "An AI's ability to think through problems step by step, not just pattern-match. Newer models are much better at this and can solve complex logic and math problems.",
+    "Multimodal": "AI that can work with multiple types of input: text, images, audio, video. You can show it a photo and ask questions about it or have it analyze a chart.",
+    "Agentic AI": "AI that can take actions on your behalf: browsing the web, running code, managing files. Think of it as AI that does, not just says. It plans, executes and adapts.",
+    "Agent": "An AI system that can independently plan and carry out multi-step tasks. Rather than just answering one question, an agent can research a topic, write a report and follow up.",
+    "MCP": "Model Context Protocol: an open standard that lets AI tools connect to your apps and data sources (like Google Drive, Slack, databases) to work with your real information. Think of it like USB for AI.",
+    "Temperature": "A setting that controls how creative vs. predictable AI responses are. Low temperature means more focused and consistent. High temperature means more creative and varied.",
+    "System prompt": "Hidden instructions that shape how an AI behaves in a conversation. Like briefing an assistant before they start work: setting the tone, rules and context.",
+    "RAG": "Retrieval-Augmented Generation: AI that pulls in relevant documents before answering so its responses are grounded in your actual data rather than just its training.",
+    "Inference": "The process of an AI generating a response to your input. When you send a message and wait for a reply, that is inference happening.",
+    "Embedding": "A way AI converts text into numbers so it can measure how similar different pieces of text are. This powers search, recommendations and document organization.",
+};
+
+const TASKS = {
+    "Writing & Communication": [
+        { task: "Draft a professional email from bullet points", tools: ["Claude", "ChatGPT"], prompt: "I need to write a professional email to [recipient/role] about [topic]. Here are my key points:\n\n- [Point 1]\n- [Point 2]\n- [Point 3]\n\nTone: [warm/formal/direct]. Keep it under [X] paragraphs. Make sure it ends with a clear next step.", difficulty: "Beginner" },
+        { task: "Rewrite dense text for a non-technical audience", tools: ["Claude"], prompt: "Rewrite the following text for someone with no technical background. Keep every fact accurate but use plain language and short sentences. If a technical term is essential, briefly define it in parentheses.\n\nOriginal text:\n[paste text here]", difficulty: "Beginner" },
+        { task: "Prepare talking points for a meeting", tools: ["Claude", "ChatGPT"], prompt: "I have a meeting about [topic] with [audience, e.g. senior leadership / cross-functional team / client]. The goal of the meeting is [goal].\n\nPrepare:\n1. Five to seven concise talking points\n2. Three questions they are likely to ask, with draft answers\n3. One thing I should avoid saying and why", difficulty: "Beginner" },
+        { task: "Create a structured brief or one-pager", tools: ["Claude"], prompt: "Help me create a one-page brief on [topic] for [audience].\n\nStructure it as:\n- Context (2-3 sentences: why this matters now)\n- Key findings or insights (3-5 bullets)\n- Recommended actions\n- Open questions or risks\n- Next steps with owners and dates\n\nKeep the total length under 500 words.", difficulty: "Intermediate" },
+        { task: "Edit and tighten your own writing", tools: ["Claude", "ChatGPT"], prompt: "Edit this for clarity and conciseness. Cut unnecessary words and fix awkward phrasing but keep my voice and tone. Do not add new ideas. Highlight what you changed and why in [brackets] after each edit.\n\n[paste your text here]", difficulty: "Beginner" },
+    ],
+    "Research & Analysis": [
+        { task: "Summarize a long document or report", tools: ["Claude", "Gemini"], prompt: "Summarize this document at three levels of detail:\n\n1. One-sentence summary (what is this about and why does it matter)\n2. Executive summary (one paragraph, 4-5 sentences)\n3. Detailed breakdown (key findings, data points, recommendations as bullets)\n\nAlso flag anything that seems surprising, contradictory or worth investigating further.\n\n[paste or upload document]", difficulty: "Beginner" },
+        { task: "Compare options with a structured framework", tools: ["Claude"], prompt: "I need to decide between these options: [Option A], [Option B], [Option C].\n\nContext: [briefly describe the decision and what matters most]\n\nFor each option, analyze:\n- Estimated cost and effort\n- Time to implement\n- Key risks\n- Strategic fit with [your goal]\n\nPresent as a comparison table, then give your recommendation with reasoning.", difficulty: "Intermediate" },
+        { task: "Research a topic you are unfamiliar with", tools: ["Perplexity", "Gemini"], prompt: "I need to quickly understand [topic] for a [meeting/decision/project] happening on [date].\n\nGive me:\n1. A 2-minute overview (what it is, why it matters, who the key players are)\n2. The three most important things I should know\n3. Common misconceptions people have about this\n4. One smart question I could ask to sound informed", difficulty: "Beginner" },
+        { task: "Analyze data from a spreadsheet", tools: ["Claude", "ChatGPT"], prompt: "I am uploading a spreadsheet with [describe data: e.g. 'monthly sales by region for 2025'].\n\nPlease:\n1. Describe what you see (columns, rows, data quality)\n2. Identify the top 3 trends or patterns\n3. Flag any outliers or anomalies\n4. Suggest 3 actionable insights based on this data\n\nShow your reasoning for each insight.", difficulty: "Intermediate" },
+        { task: "Fact-check or verify claims", tools: ["Perplexity"], prompt: "Verify whether the following claims are accurate. For each claim:\n- State whether it is true, false or partially true\n- Provide a brief explanation with a source\n- Rate your confidence (high/medium/low)\n\nClaims:\n1. [Claim 1]\n2. [Claim 2]\n3. [Claim 3]", difficulty: "Beginner" },
+    ],
+    "Planning & Strategy": [
+        { task: "Break a big goal into actionable steps", tools: ["Claude", "ChatGPT"], prompt: "I want to achieve [goal] by [timeframe]. I have [resources/constraints].\n\nBreak this into:\n1. Three to four phases with clear milestones\n2. Specific tasks within each phase\n3. Dependencies (what needs to happen before what)\n4. A realistic timeline\n5. The single biggest risk at each phase and how to mitigate it", difficulty: "Beginner" },
+        { task: "Stress-test a business decision", tools: ["Claude"], prompt: "I am considering [decision]. Here is my reasoning: [explain].\n\nPlay devil's advocate:\n1. What are the top 5 risks I might be underweighting?\n2. What would need to be true for this to fail?\n3. What am I probably not thinking about?\n4. Who would disagree with this decision and what would they say?\n5. What is the cost of being wrong vs. the cost of doing nothing?", difficulty: "Intermediate" },
+        { task: "Draft a project proposal or scope", tools: ["Claude"], prompt: "Help me draft a project proposal for [project name].\n\nContext: [2-3 sentences about why this project matters]\n\nInclude these sections:\n- Objectives (what success looks like)\n- Scope (what is in and what is out)\n- Timeline with key milestones\n- Resource needs (people, budget, tools)\n- Success metrics (how we will measure impact)\n- Top 3 risks with mitigation plans", difficulty: "Intermediate" },
+        { task: "Prepare for a difficult conversation", tools: ["Claude"], prompt: "I need to have a conversation with [person/role] about [topic]. The situation is [context].\n\nHelp me:\n1. Understand their likely perspective and concerns\n2. Prepare my three key points in order of importance\n3. Anticipate their top two objections with my responses\n4. Suggest how to open the conversation constructively\n5. Identify one thing I should definitely not say", difficulty: "Beginner" },
+    ],
+    "Learning & Skill Building": [
+        { task: "Explain a complex concept simply", tools: ["Claude", "ChatGPT"], prompt: "Explain [concept] to me as if I am intelligent but have zero background in this field. Use an analogy from everyday life. Then give me the 'real' explanation I would get in a textbook, so I can see both versions.", difficulty: "Beginner" },
+        { task: "Create a study plan for a new skill", tools: ["Claude"], prompt: "I want to learn [skill] over the next [timeframe]. I can spend about [hours] per week. My current level is [beginner/some exposure/intermediate].\n\nCreate a structured learning plan with:\n- Weekly goals and topics\n- Specific resources (free when possible)\n- Practice exercises for each week\n- A milestone at the halfway point to check my progress", difficulty: "Beginner" },
+        { task: "Get feedback on your understanding", tools: ["Claude", "ChatGPT"], prompt: "I am going to explain my understanding of [topic]. Tell me:\n1. What I got right\n2. What I got wrong or partially wrong\n3. What important things I am missing\n4. One follow-up question that would deepen my understanding\n\nHere is my explanation:\n[your explanation]", difficulty: "Intermediate" },
+    ],
+    "Productivity & Automation": [
+        { task: "Create a template for recurring work", tools: ["Claude", "ChatGPT"], prompt: "I regularly need to [describe recurring task, e.g. 'write weekly status updates' or 'prepare client meeting agendas']. It usually takes me [time] and I do it [frequency].\n\nCreate a reusable template with:\n- Clear sections with placeholder text I can fill in\n- A checklist of things to include each time\n- Example of one filled-in version so I can see the expected output", difficulty: "Beginner" },
+        { task: "Process and organize messy notes", tools: ["Claude"], prompt: "Here are my raw notes from [meeting/brainstorm/research session]. They are messy and unstructured.\n\nPlease:\n1. Organize them into clear thematic categories\n2. Highlight action items with owners if mentioned\n3. Flag open questions that need follow-up\n4. Create a clean summary I could share with someone who was not there\n\nNotes:\n[paste notes]", difficulty: "Beginner" },
+        { task: "Generate a spreadsheet formula", tools: ["Claude", "ChatGPT"], prompt: "In [Excel/Google Sheets] I need a formula that [describe what you need, e.g. 'looks up a value from Sheet2 based on matching IDs in column A'].\n\nMy data layout:\n- [Describe columns and where data lives]\n\nPlease provide:\n1. The formula with an explanation of each part\n2. An example of how it works with sample data\n3. Common errors to watch out for", difficulty: "Intermediate" },
+        { task: "Automate a repetitive task with AI agents", tools: ["Claude Cowork"], prompt: "I spend about [time] every [frequency] doing [task]. I want to explore whether AI can help automate this.\n\nDescribe:\n1. Which parts of this task AI could handle today\n2. Which parts still need a human\n3. What tools or setup I would need\n4. A step-by-step plan to start automating the easiest part first", difficulty: "Advanced" },
+    ]
+};
+
+const TOOLS_DATA = [
+    {
+        id: "claude", name: "Claude", provider: "Anthropic",
+        tagline: "Deep thinking, careful reasoning, transparent about what it does not know",
+        bestFor: "Complex analysis, writing, reasoning, working with long documents, coding",
+        color: "#C47035", referralUrl: "https://claude.ai",
+        tiers: [
+            { name: "Free", price: "$0", features: ["Access on web, mobile, desktop", "Web search and image analysis", "Basic usage limits"] },
+            { name: "Pro", price: "$20/mo", features: ["25x more usage than Free", "Claude Code (terminal tool)", "File creation and code execution", "Priority access"], recommended: true },
+            { name: "Max", price: "$100-200/mo", features: ["5-20x more than Pro", "Maximum priority", "For heavy daily users"] },
+        ],
+        latestModel: "Claude Opus 4.6 / Sonnet 4.6",
+        ecosystem: [
+            { name: "Claude Chat", desc: "Conversational AI for questions, document analysis and content creation. Available on web, iOS, Android and desktop." },
+            { name: "Claude Cowork", desc: "AI that works on your desktop. Connects to your files, Google Drive and Gmail. Can control apps on your behalf to complete real tasks." },
+            { name: "Claude Code", desc: "AI coding assistant in your terminal. Writes, edits and debugs code. Used by professional developers." },
+        ]
+    },
+    {
+        id: "chatgpt", name: "ChatGPT", provider: "OpenAI",
+        tagline: "The most widely recognized AI tool with a broad feature set",
+        bestFor: "General tasks, image generation, voice conversations, broad plugin ecosystem",
+        color: "#10A37F", referralUrl: "https://chatgpt.com",
+        tiers: [
+            { name: "Free", price: "$0", features: ["Limited GPT-5.4 access", "About 10 messages per 5 hours", "Basic chat and analysis"] },
+            { name: "Go", price: "$8/mo", features: ["Unlimited chat access", "File uploads and image generation", "May include ads"] },
+            { name: "Plus", price: "$20/mo", features: ["Higher message limits", "Advanced reasoning models", "Image generation"], recommended: true },
+            { name: "Pro", price: "$200/mo", features: ["Unlimited access to all models", "Advanced voice", "Video generation"] },
+        ],
+        latestModel: "GPT-5.4",
+        ecosystem: [
+            { name: "ChatGPT", desc: "The flagship chat interface on web, iOS, Android and desktop. Most people's first AI experience." },
+            { name: "GPTs", desc: "Custom versions of ChatGPT built for specific purposes. Browse the GPT Store or create your own." },
+            { name: "ChatGPT Enterprise", desc: "Workplace version with data privacy, admin controls and team collaboration." },
+        ]
+    },
+    {
+        id: "gemini", name: "Gemini", provider: "Google",
+        tagline: "Deeply integrated with Google's ecosystem: Search, Docs, Gmail",
+        bestFor: "Google Workspace users, search-grounded answers, multimodal tasks",
+        color: "#4285F4", referralUrl: "https://gemini.google.com",
+        tiers: [
+            { name: "Free", price: "$0", features: ["Gemini 2.5 Flash", "100 AI credits", "Basic search capabilities"] },
+            { name: "Pro", price: "$20/mo", features: ["Gemini 3.1 Pro access", "1,000 AI credits", "Google Workspace integration"], recommended: true },
+            { name: "Ultra", price: "$250/mo", features: ["Deep Think mode", "25,000 AI credits", "Advanced media generation"] },
+        ],
+        latestModel: "Gemini 3.1 Pro",
+        ecosystem: [
+            { name: "Gemini Chat", desc: "Google's conversational AI integrated with Google Search for up-to-date, sourced answers." },
+            { name: "Gemini in Workspace", desc: "AI built into Gmail, Docs, Sheets and Slides. Summarize emails, draft documents, create presentations." },
+            { name: "NotebookLM", desc: "Upload documents and get an AI that only answers from your sources. Great for research. Can generate audio overviews (AI podcasts)." },
+        ]
+    },
+    {
+        id: "perplexity", name: "Perplexity", provider: "Perplexity AI",
+        tagline: "AI-powered research tool where every answer comes with sources you can verify",
+        bestFor: "Research, fact-checking, current events, questions that need sourced answers",
+        color: "#6366F1", referralUrl: "https://perplexity.ai",
+        tiers: [
+            { name: "Free", price: "$0", features: ["Unlimited basic searches", "5 Pro searches per day", "PDF search"] },
+            { name: "Pro", price: "$20/mo", features: ["Unlimited Pro queries", "Multi-step reasoning", "Premium models", "Image generation"], recommended: true },
+        ],
+        latestModel: "Sonar",
+        ecosystem: [
+            { name: "Perplexity Search", desc: "Ask any question, get a sourced answer with citations. Like a search engine but the AI reads all the results for you." },
+            { name: "Perplexity Spaces", desc: "Organize research by topic. Upload files, set custom instructions and build a knowledge base." },
+        ]
+    },
+];
+
+const DEEP_DIVE_TOOLS = [
+    { name: "Microsoft Copilot", category: "Workplace AI", desc: "AI built into Microsoft 365: Word, Excel, PowerPoint, Outlook, Teams. If your company uses Microsoft, this is likely your first enterprise AI tool.", price: "$30/user/mo (enterprise)" },
+    { name: "Kiro", category: "Developer Tool", desc: "An agentic IDE for spec-driven development. Built on Code OSS (VS Code foundation). Helps developers go from concept to production. Works with any tech stack and integrates with AWS services.", price: "Free (preview)" },
+    { name: "Cursor / GitHub Copilot", category: "Developer Tool", desc: "AI-powered code editors. Cursor is a standalone IDE with deep AI integration. GitHub Copilot integrates into VS Code. Both help write, explain and debug code.", price: "Cursor: $20/mo | Copilot: $10/mo" },
+    { name: "Midjourney / DALL-E", category: "Image Generation", desc: "Create images from text descriptions. Midjourney excels at artistic and creative images. DALL-E (in ChatGPT) is great for quick visuals and editing.", price: "Midjourney: $10/mo | DALL-E: included in ChatGPT Plus" },
+];
+
+const MYTHS = [
+    { myth: "GenAI = ChatGPT", reality: "ChatGPT is one product powered by OpenAI's models. There are many AI tools with different strengths. Picking the right one for the job matters, like choosing the right app on your phone." },
+    { myth: "AI is mainly for generating content", reality: "The most valuable use of AI is not generating LinkedIn posts. It is analyzing documents, reasoning through decisions, automating repetitive work and accelerating tasks you already do." },
+    { myth: "You need to be technical to use AI well", reality: "The main skill is clear communication: explaining what you need in plain language. If you can brief a colleague, you can prompt an AI effectively." },
+    { myth: "AI will replace my job", reality: "AI changes how work gets done, not whether it gets done. People who learn to work with AI will have a significant advantage over those who do not." },
+    { myth: "Free tiers are not useful", reality: "Free tiers of Claude, ChatGPT and Perplexity are genuinely useful for getting started. You can accomplish real work before deciding if a paid plan is worth it." },
+];
+
+const CONCEPTS = [
+    { title: "What is an LLM?", icon: "brain", content: "A Large Language Model is the engine behind AI tools. It has been trained on enormous amounts of text to understand patterns in language. When you type a message, the LLM predicts the most helpful response, not by 'thinking' like a human, but by recognizing patterns in how language works. Different LLMs (GPT, Claude, Gemini) are built by different companies with different approaches, which is why they have different strengths." },
+    { title: "Model vs. Product", icon: "doc", content: "This is the most important distinction most people miss. A model (like GPT-5.4 or Claude Opus 4.6) is the AI brain. A product (like ChatGPT or Claude) is the interface you use to talk to that brain. One company might offer multiple models: faster ones for simple tasks, more powerful ones for complex work. The product decides which model to use or lets you choose." },
+    { title: "How the conversation works", icon: "chat", content: "When you send a message, the AI does not 'remember' past conversations by default. It reads the entire conversation from the start each time. This is the 'context window.' Larger context windows mean the AI can handle longer conversations and bigger documents. When a conversation gets too long, the AI may start 'forgetting' earlier parts." },
+    { title: "Why results vary", icon: "target", content: "The same question can get very different answers depending on which tool you use, how you phrase your prompt and what context you provide. This is not a bug. It is how the technology works. Learning to write clear, specific prompts is the single most impactful skill you can develop." },
+    { title: "What AI can and cannot do", icon: "scale", content: "AI is excellent at drafting, summarizing, analyzing, explaining, brainstorming and coding. It struggles with very recent events (unless it has search), precise calculations, personal opinions and guaranteed factual accuracy. Always verify important facts. Think of AI as a brilliant but sometimes overconfident assistant." },
+];
+
+const INDUSTRY_EXAMPLES = [
+    { industry: "Healthcare", examples: [
+        { company: "Abridge", what: "AI listens to doctor-patient conversations and automatically generates clinical notes. Doctors spend more time with patients instead of typing." },
+        { company: "DeepScribe", what: "Ambient AI scribe for cancer care. Captures 4 million oncology visits per year with specialty-specific models." },
+        { company: "Insilico Medicine", what: "Uses AI to design new drug candidates. Their AI-designed drugs have entered human clinical trials for cancer and fibrosis." },
+    ]},
+    { industry: "Agriculture", examples: [
+        { company: "Orchard Robotics", what: "AI-powered vision system (FruitScope) that scans orchards to predict yield, detect disease and optimize harvesting for tree and vine crops." },
+        { company: "AI Weeding Systems", what: "Fine-tuned laser weeders that identify and eliminate weeds without chemicals. Expected to reduce weeding costs by 40-50%." },
+    ]},
+    { industry: "Transportation & Logistics", examples: [
+        { company: "FedEx", what: "AI predicts and avoids delays in international shipping. Anticipates customs bottlenecks before packages get stuck." },
+        { company: "Descartes Systems", what: "AI routing engine that dynamically responds to traffic, vehicle availability and delivery windows in real time." },
+    ]},
+    { industry: "Energy", examples: [
+        { company: "GE Vernova", what: "AI-enabled solutions for power generation across nuclear, natural gas and renewables. Helps operate 25% of global electricity infrastructure." },
+        { company: "GridBeyond", what: "Software that uses AI to manage electricity flow and optimize the grid, balancing supply and demand in real time." },
+    ]},
+    { industry: "Financial Services", examples: [
+        { company: "JPMorgan Chase", what: "Top-ranked globally in AI adoption for 4 consecutive years. Uses AI across fraud detection, risk analysis, trading and client services." },
+        { company: "Scienaptic AI", what: "AI credit underwriting platform that uses non-traditional data for more accurate and inclusive lending decisions." },
+    ]},
+];
+
+const CONCEPT_HIERARCHY = {
+    levels: [
+        { name: "Artificial Intelligence (AI)", desc: "The broadest category. Any system that can perform tasks that typically require human intelligence.", width: "100%" },
+        { name: "Machine Learning (ML)", desc: "AI that learns from data rather than following explicit rules. Most modern AI is ML-based.", width: "85%" },
+        { name: "Generative AI (GenAI)", desc: "ML that creates new content: text, images, code, audio. This is the wave happening right now.", width: "70%" },
+        { name: "Large Language Models (LLMs)", desc: "The specific technology behind GenAI text tools. GPT, Claude and Gemini are all LLMs.", width: "55%" },
+        { name: "Agents", desc: "LLMs that can take actions: browse the web, run code, use tools. They plan, execute and adapt independently.", width: "40%" },
+    ],
+    connectors: [
+        { name: "MCP (Model Context Protocol)", desc: "The standard that lets agents connect to your real data: Google Drive, Slack, databases. Think of MCP as USB ports for AI. Without MCP, an agent is smart but isolated. With MCP, it can access your actual work." },
+    ]
+};
+
+const FACTOIDS = [
+    "The word \"hallucination\" was not in AI vocabulary until 2022. It became the most-discussed term in AI safety within a year and was named word of the year by Cambridge Dictionary in 2023.",
+    "AI does not \"think.\" It predicts. Every response from ChatGPT or Claude is the statistically most likely next word, repeated thousands of times. The magic is that this produces something that feels like reasoning.",
+    "The \"T\" in GPT stands for Transformer, an architecture invented by Google researchers in 2017. Almost every major AI model today (Claude, GPT, Gemini, Llama) is built on that same foundation.",
+    "Claude is named after Claude Shannon, the mathematician who founded information theory in 1948, essentially inventing the math that makes all digital communication (and AI) possible.",
+    "You have already used AI hundreds of times today. Gmail autocomplete, Spotify recommendations, Google Maps routing, credit card fraud detection are all powered by machine learning models.",
+    "An AI passed the US medical licensing exam in 2023. But it still cannot reliably tell you if a photo contains a hot dog or a not hot dog. AI is surprisingly uneven in what it is good at.",
+    "There is no single \"AI.\" There are thousands of specialized models. The one that writes your emails, the one that generates images and the one that drives a Tesla are completely different systems that cannot do each other's jobs.",
+    "A prompt is just a fancy word for \"instructions.\" The better and more specific your instructions, the better the output. Prompt engineering is really just clear communication.",
+    "The entire Wikipedia (6.7 million articles) is roughly 4 GB of text. Large language models are trained on datasets 1,000x larger, the equivalent of reading every book in 50 Libraries of Congress.",
+];
+
+// ===== TOOLTIP =====
+function Tooltip({ term, children }) {
+    const [show, setShow] = useState(false);
+    const [pos, setPos] = useState({ top: 0, left: 0 });
+    const definition = GLOSSARY[term];
+    if (!definition) return children || term;
+    const handleEnter = (e) => {
+        const rect = (e.target || e.currentTarget).getBoundingClientRect();
+        setPos({ top: rect.bottom + 8, left: Math.min(Math.max(rect.left, 16), window.innerWidth - 296) });
+        setShow(true);
+    };
+    return (
+        <>
+            <span className="tooltip-trigger" onMouseEnter={handleEnter} onMouseLeave={() => setShow(false)}
+                onTouchStart={(e) => { e.preventDefault(); handleEnter(e); setTimeout(() => setShow(false), 3000); }}>
+                {children || term}
+            </span>
+            {show && ReactDOM.createPortal(<div className="tooltip-popup" style={{ top: pos.top, left: pos.left }}>{definition}</div>, document.body)}
+        </>
+    );
+}
+
+// ===== SEARCH =====
+function SearchOverlay({ onClose, onNavigate }) {
+    const [query, setQuery] = useState("");
+    const inputRef = useRef(null);
+    useEffect(() => { inputRef.current?.focus(); }, []);
+    const allItems = useMemo(() => {
+        const items = [];
+        Object.entries(GLOSSARY).forEach(([term, def]) => items.push({ type: "Glossary", title: term, text: def, section: "glossary" }));
+        Object.entries(TASKS).forEach(([cat, tasks]) => tasks.forEach(t => items.push({ type: "Task", title: t.task, text: `${cat} - ${t.tools.join(", ")}`, section: "apply" })));
+        TOOLS_DATA.forEach(t => items.push({ type: "Tool", title: t.name, text: `${t.tagline} - ${t.bestFor}`, section: "setup" }));
+        CONCEPTS.forEach(c => items.push({ type: "Concept", title: c.title, text: c.content, section: "understand" }));
+        MYTHS.forEach(m => items.push({ type: "Myth", title: m.myth, text: m.reality, section: "understand" }));
+        INDUSTRY_EXAMPLES.forEach(ind => ind.examples.forEach(ex => items.push({ type: "Industry", title: `${ex.company} (${ind.industry})`, text: ex.what, section: "understand" })));
+        return items;
+    }, []);
+    const results = query.length > 1 ? allItems.filter(i => (i.title + " " + i.text).toLowerCase().includes(query.toLowerCase())).slice(0, 12) : [];
+    return (
+        <div className="search-overlay" onClick={onClose}>
+            <div className="search-box animate-in" onClick={e => e.stopPropagation()}>
+                <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)' }}>{Icons.search("#9B9590", 20)}</div>
+                    <input ref={inputRef} className="search-input" placeholder="Search terms, tools, tasks..." value={query} onChange={e => setQuery(e.target.value)}/>
+                </div>
+                {results.length > 0 && (
+                    <div className="search-results">
+                        {results.map((r, i) => (
+                            <div key={i} className="search-result" onClick={() => { onNavigate(r.section); onClose(); }}>
+                                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+                                    <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', background: 'var(--bg-highlight)', borderRadius: 4, color: 'var(--text-tertiary)' }}>{r.type}</span>
+                                    <span style={{ fontWeight: 600, fontSize: 14 }}>{r.title}</span>
+                                </div>
+                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4 }}>{r.text.slice(0, 120)}...</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {query.length > 1 && results.length === 0 && (
+                    <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 14 }}>No results for "{query}"</div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// ===== MAIN APP =====
+function App() {
+    const [phase, setPhase] = useState("welcome");
+    const [selectedRole, setSelectedRole] = useState(null);
+    const [activeSection, setActiveSection] = useState("understand");
+    const [expandedTool, setExpandedTool] = useState(null);
+    const [expandedTask, setExpandedTask] = useState(null);
+    const [showSearch, setShowSearch] = useState(false);
+    const [contactSent, setContactSent] = useState(false);
+    const [contactData, setContactData] = useState({ name: "", email: "", message: "" });
+    const [questionSent, setQuestionSent] = useState(false);
+    const [questionData, setQuestionData] = useState({ name: "", contact: "", question: "" });
+    const [selectedConcept, setSelectedConcept] = useState(null);
+    const [copiedPrompt, setCopiedPrompt] = useState(null);
+    const [visitedSections, setVisitedSections] = useState(new Set(["understand"]));
+    const [showShareToast, setShowShareToast] = useState(false);
+    const [showFactoid, setShowFactoid] = useState(null);
+    const [seenFactoids, setSeenFactoids] = useState(new Set());
+
+    const showRandomFactoid = () => {
+        const unseen = FACTOIDS.map((f, i) => i).filter(i => !seenFactoids.has(i));
+        const pool = unseen.length > 0 ? unseen : FACTOIDS.map((f, i) => i);
+        if (unseen.length === 0) setSeenFactoids(new Set());
+        const idx = pool[Math.floor(Math.random() * pool.length)];
+        setSeenFactoids(prev => new Set([...prev, idx]));
+        setShowFactoid(idx);
+        if (typeof gtag === 'function') gtag('event', 'surprise_factoid', { event_category: 'engagement', factoid_index: idx });
+    };
+
+    const roles = [
+        { id: "exec", label: "Executive / Leader", desc: "Making strategic decisions, managing teams" },
+        { id: "marketing", label: "Marketing / Comms", desc: "Content, campaigns, communications" },
+        { id: "finance", label: "Finance / Operations", desc: "Analysis, reporting, process optimization" },
+        { id: "founder", label: "Founder / Entrepreneur", desc: "Building, wearing many hats" },
+        { id: "product", label: "Product / Project Manager", desc: "Planning, coordination, delivery" },
+        { id: "other", label: "Something else", desc: "I will explore everything" },
+    ];
+
+    const progress = phase === "welcome" ? 0 : phase === "role" ? 15 : phase === "myths_onboard" ? 30 : 100;
+    const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+    const navigateTo = (newPhase, section) => {
+        setPhase(newPhase);
+        if (section) {
+            setActiveSection(section);
+            setVisitedSections(prev => new Set([...prev, section]));
+        }
+        if (typeof gtag === 'function') gtag('event', 'navigate_phase', { event_category: 'navigation', phase: newPhase, section: section || '' });
+        setTimeout(scrollToTop, 50);
+    };
+
+    const switchSection = (sectionId) => {
+        setActiveSection(sectionId);
+        setVisitedSections(prev => new Set([...prev, sectionId]));
+        if (typeof gtag === 'function') gtag('event', 'view_section', { event_category: 'navigation', section: sectionId });
+        scrollToTop();
+    };
+
+    const copyPrompt = (prompt, idx) => {
+        navigator.clipboard.writeText(prompt).then(() => {
+            setCopiedPrompt(idx);
+            if (typeof gtag === 'function') gtag('event', 'copy_prompt', { event_category: 'engagement', prompt_id: idx });
+            setTimeout(() => setCopiedPrompt(null), 2000);
+        });
+    };
+
+    const shareApp = () => {
+        const url = window.location.href;
+        const text = "I just found this practical guide to getting started with AI tools. No fluff, just useful.";
+        if (typeof gtag === 'function') gtag('event', 'share_app', { event_category: 'engagement' });
+        if (navigator.share) {
+            navigator.share({ title: 'Basecamp AI', text, url });
+        } else {
+            navigator.clipboard.writeText(`${text}\n${url}`);
+            setShowShareToast(true);
+            setTimeout(() => setShowShareToast(false), 2500);
+        }
+    };
+
+    useEffect(() => {
+        const handler = (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setShowSearch(true); } if (e.key === 'Escape') setShowSearch(false); };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
+
+    // ===== WELCOME =====
+    if (phase === "welcome") {
+        return (
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px 24px', textAlign: 'center' }}>
+                <div className="animate-in" style={{ maxWidth: 520 }}>
+                    <div style={{ marginBottom: 24 }}>{Icons.understand("#C47035", 56)}</div>
+                    <h1 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 16 }}>Basecamp AI</h1>
+                    <p style={{ fontSize: 'clamp(16px, 3.5vw, 18px)', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 12, maxWidth: 440, margin: '0 auto 12px' }}>
+                        Not another AI course. Not a list of "top 10 prompts."
+                    </p>
+                    <p style={{ fontSize: 'clamp(15px, 3vw, 17px)', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 40, maxWidth: 440, margin: '0 auto 40px' }}>
+                        A practical guide to understand what <Tooltip term="GenAI">GenAI</Tooltip> actually is,
+                        find the right tools for your work and start using them today.
+                    </p>
+                    <button onClick={() => navigateTo("role")} style={{ background: 'var(--text-primary)', color: '#fff', border: 'none', padding: '16px 40px', borderRadius: 'var(--radius-xl)', fontSize: 16, fontWeight: 600, cursor: 'pointer', boxShadow: 'var(--shadow-md)' }}>
+                        Get started
+                    </button>
+                    <p style={{ marginTop: 24, fontSize: 13, color: 'var(--text-tertiary)' }}>Takes about 10 minutes. No signup required.</p>
+                </div>
+            </div>
+        );
+    }
+
+    // ===== ROLE =====
+    if (phase === "role") {
+        return (
+            <div style={{ minHeight: '100vh', padding: '60px 24px 40px', maxWidth: 560, margin: '0 auto' }}>
+                <div className="progress-bar-track"><div className="progress-bar-fill" style={{ width: `${progress}%` }}/></div>
+                <div className="animate-in">
+                    <button onClick={() => navigateTo("welcome")} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: 13, fontWeight: 500, marginBottom: 16 }}>{Icons.back("#9B9590", 16)} Back</button>
+                    <p style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 8, fontWeight: 500 }}>STEP 1 OF 3</p>
+                    <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 8 }}>What best describes you?</h2>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: 32 }}>This helps us suggest the most relevant tasks and tools.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                        {roles.map((role) => (
+                            <button key={role.id} onClick={() => { setSelectedRole(role.id); setTimeout(() => navigateTo("myths_onboard"), 300); }}
+                                style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '18px 20px', background: selectedRole === role.id ? 'var(--accent-bg)' : 'var(--bg-card)', border: selectedRole === role.id ? '2px solid var(--accent)' : '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left', width: '100%', boxShadow: 'var(--shadow-sm)' }}>
+                                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{Icons.brain("#C47035", 22)}</div>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>{role.label}</div>
+                                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{role.desc}</div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ===== MYTHS ONBOARDING =====
+    if (phase === "myths_onboard") {
+        return (
+            <div style={{ minHeight: '100vh', padding: '60px 24px 40px', maxWidth: 560, margin: '0 auto' }}>
+                <div className="progress-bar-track"><div className="progress-bar-fill" style={{ width: `${progress}%` }}/></div>
+                <div className="animate-in">
+                    <button onClick={() => navigateTo("role")} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontSize: 13, fontWeight: 500, marginBottom: 16 }}>{Icons.back("#9B9590", 16)} Back</button>
+                    <p style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 8, fontWeight: 500 }}>STEP 2 OF 3</p>
+                    <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 8 }}>Let's clear the air first</h2>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: 28 }}>Five things most people get wrong about AI.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                        {MYTHS.map((m, i) => (
+                            <div key={i} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '20px', boxShadow: 'var(--shadow-sm)' }}>
+                                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+                                    <span style={{ background: '#FEE', color: '#C44', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>MYTH</span>
+                                    <span style={{ fontWeight: 600, fontSize: 15 }}>"{m.myth}"</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                                    <span style={{ background: 'var(--success-bg)', color: 'var(--success)', fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4, flexShrink: 0, marginTop: 1 }}>REALITY</span>
+                                    <span style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{m.reality}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ marginTop: 32, display: 'flex', gap: 12 }}>
+                        <button onClick={() => navigateTo("role")} style={{ flex: '0 0 auto', padding: '14px 20px', background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-xl)', fontSize: 15, cursor: 'pointer', color: 'var(--text-secondary)' }}>Back</button>
+                        <button onClick={() => navigateTo("hub", "understand")} style={{ flex: 1, padding: '14px 24px', background: 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
+                            Now let's understand the basics
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ===== HUB =====
+    // FIX: Removed "myths" as a separate hub tab. Myths are shown during onboarding and folded into the Understand section.
+    const sections = [
+        { id: "understand", label: "Understand", icon: "understand" },
+        { id: "apply", label: "Apply", icon: "apply" },
+        { id: "setup", label: "Set up", icon: "setup" },
+        { id: "glossary", label: "Glossary", icon: "glossary" },
+        { id: "connect", label: "Connect", icon: "connect" },
+    ];
+
+    const sectionOrder = sections.map(s => s.id);
+    const currentIdx = sectionOrder.indexOf(activeSection);
+    const prevSection = currentIdx > 0 ? sections[currentIdx - 1] : null;
+    const nextSection = currentIdx < sections.length - 1 ? sections[currentIdx + 1] : null;
+
+    const NavFooter = () => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 40, paddingTop: 24, borderTop: '1px solid var(--border-light)' }}>
+            {prevSection ? (
+                <button onClick={() => switchSection(prevSection.id)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 14, fontWeight: 500 }}>
+                    {Icons.back("#6B6560", 18)} {prevSection.label}
+                </button>
+            ) : <div/>}
+            {nextSection ? (
+                <button onClick={() => switchSection(nextSection.id)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 14, fontWeight: 600 }}>
+                    {nextSection.label} {Icons.forward("#C47035", 18)}
+                </button>
+            ) : <div/>}
+        </div>
+    );
+
+    // Progress tracker dots
+    const ProgressTracker = () => (
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 32 }}>
+            {sections.map(s => (
+                <div key={s.id} className={`progress-dot ${s.id === activeSection ? 'active' : visitedSections.has(s.id) ? 'completed' : 'pending'}`}
+                    onClick={() => switchSection(s.id)} style={{ cursor: 'pointer' }} title={s.label}/>
+            ))}
+        </div>
+    );
+
+    return (
+        <div style={{ minHeight: '100vh', paddingBottom: 100 }}>
+            {showSearch && <SearchOverlay onClose={() => setShowSearch(false)} onNavigate={(s) => switchSection(s)} />}
+
+            {/* Share toast */}
+            {showShareToast && (
+                <div style={{ position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)', background: 'var(--text-primary)', color: '#fff', padding: '12px 24px', borderRadius: 'var(--radius-xl)', fontSize: 14, fontWeight: 500, zIndex: 9999, boxShadow: 'var(--shadow-md)' }} className="animate-in">
+                    Link copied to clipboard
+                </div>
+            )}
+
+            {/* Factoid modal */}
+            {showFactoid !== null && (
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,24,21,0.5)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
+                    onClick={() => setShowFactoid(null)}>
+                    <div className="animate-in" onClick={e => e.stopPropagation()}
+                        style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', padding: '32px 28px', maxWidth: 420, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.2)', position: 'relative' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                            {Icons.surprise("#C47035", 28)}
+                            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Did you know?</span>
+                        </div>
+                        <p style={{ fontSize: 16, lineHeight: 1.7, color: 'var(--text-primary)', marginBottom: 24 }}>{FACTOIDS[showFactoid]}</p>
+                        <div style={{ display: 'flex', gap: 10 }}>
+                            <button onClick={() => setShowFactoid(null)}
+                                style={{ flex: 1, padding: '12px', background: 'var(--bg-highlight)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-xl)', fontSize: 14, fontWeight: 500, cursor: 'pointer', color: 'var(--text-secondary)' }}>Close</button>
+                            <button onClick={showRandomFactoid}
+                                style={{ flex: 1, padding: '12px', background: 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Another one</button>
+                        </div>
+                        <div style={{ textAlign: 'center', marginTop: 12, fontSize: 12, color: 'var(--text-tertiary)' }}>{seenFactoids.size} of {FACTOIDS.length} discovered</div>
+                    </div>
+                </div>
+            )}
+
+            {/* Floating Surprise Me button */}
+            <button onClick={showRandomFactoid}
+                style={{ position: 'fixed', bottom: 24, right: 24, display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', background: 'var(--bg-card)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-xl)', boxShadow: '0 4px 16px rgba(196,112,53,0.2)', cursor: 'pointer', zIndex: 90, fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>
+                {Icons.surprise("#C47035", 18)} Surprise me
+            </button>
+
+            {/* Top nav */}
+            <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg-warm)', borderBottom: '1px solid var(--border-light)', padding: '0 16px' }}>
+                <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', alignItems: 'center', height: 56, gap: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                        {sections.map(s => (
+                            <button key={s.id} onClick={() => switchSection(s.id)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', background: activeSection === s.id ? 'var(--accent-bg)' : 'transparent', border: activeSection === s.id ? '1.5px solid var(--accent)' : '1.5px solid transparent', borderRadius: 'var(--radius-xl)', fontSize: 12, fontWeight: activeSection === s.id ? 600 : 500, color: activeSection === s.id ? 'var(--accent)' : 'var(--text-secondary)', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                {Icons[s.icon](activeSection === s.id ? "#C47035" : "#6B6560", 14)} {s.label}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                        <button onClick={shareApp} title="Share this guide" style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-highlight)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}>
+                            {Icons.share("#6B6560", 16)}
+                        </button>
+                        <button onClick={() => setShowSearch(true)} title="Search (Ctrl+K)" style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-highlight)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}>
+                            {Icons.search("#6B6560", 16)}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ maxWidth: 640, margin: '0 auto', padding: '32px 20px' }}>
+                <ProgressTracker/>
+
+                {/* ===== UNDERSTAND ===== */}
+                {activeSection === "understand" && (
+                    <div className="animate-fade">
+                        <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>Understand GenAI</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 32, fontSize: 15 }}>The essential concepts. No jargon, no fluff. Tap any <Tooltip term="Token">highlighted term</Tooltip> for a quick definition.</p>
+
+                        {/* Myths recap (collapsed) */}
+                        <div style={{ background: 'var(--accent-bg)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-md)', padding: '16px 20px', marginBottom: 24, cursor: 'pointer' }}
+                            onClick={() => { const el = document.getElementById('myths-section'); if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none'; }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                    {Icons.myths("#C47035", 20)}
+                                    <span style={{ fontWeight: 600, fontSize: 15 }}>5 myths about AI (revisit)</span>
+                                </div>
+                                <span style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 500 }}>Tap to expand</span>
+                            </div>
+                        </div>
+                        <div id="myths-section" style={{ display: 'none', marginBottom: 24 }}>
+                            {MYTHS.map((m, i) => (
+                                <div key={i} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px', marginBottom: 8, boxShadow: 'var(--shadow-sm)' }}>
+                                    <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 6 }}>
+                                        <span style={{ background: '#FEE', color: '#C44', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, flexShrink: 0 }}>MYTH</span>
+                                        <span style={{ fontWeight: 600, fontSize: 14 }}>"{m.myth}"</span>
+                                    </div>
+                                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginLeft: 46 }}>{m.reality}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Concepts */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 40 }}>
+                            {CONCEPTS.map((c, i) => (
+                                <div key={i} onClick={() => setSelectedConcept(selectedConcept === i ? null : i)}
+                                    style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', cursor: 'pointer', boxShadow: 'var(--shadow-sm)', borderColor: selectedConcept === i ? 'var(--accent)' : 'var(--border)' }}>
+                                    <div style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                                            {Icons[c.icon]("#C47035", 28)}
+                                            <span style={{ fontWeight: 600, fontSize: 15 }}>{c.title}</span>
+                                        </div>
+                                        <span style={{ color: 'var(--text-tertiary)', fontSize: 18, transition: 'transform 0.2s', transform: selectedConcept === i ? 'rotate(180deg)' : 'none' }}>&#x25BE;</span>
+                                    </div>
+                                    {selectedConcept === i && (
+                                        <div style={{ padding: '0 20px 20px', color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7, borderTop: '1px solid var(--border-light)', paddingTop: 16 }}>{c.content}</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Concept Hierarchy */}
+                        <h3 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 22, fontWeight: 700, marginBottom: 6 }}>How it all fits together</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+                            <Tooltip term="Agentic AI">Agents</Tooltip>, <Tooltip term="MCP">MCP</Tooltip>, <Tooltip term="LLM">LLMs</Tooltip>... here is how these concepts relate to each other.
+                        </p>
+                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '24px', marginBottom: 16, boxShadow: 'var(--shadow-sm)' }}>
+                            {CONCEPT_HIERARCHY.levels.map((level, i) => (
+                                <div key={i} style={{ width: level.width, margin: '0 auto', marginBottom: 8 }}>
+                                    <div style={{ background: `rgba(196, 112, 53, ${0.08 + i * 0.06})`, border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '12px 16px' }}>
+                                        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{level.name}</div>
+                                        <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{level.desc}</div>
+                                    </div>
+                                </div>
+                            ))}
+                            <div style={{ margin: '16px auto 0', padding: '14px 18px', background: 'var(--info-bg)', border: '1.5px solid var(--info)', borderRadius: 'var(--radius-sm)', maxWidth: '70%' }}>
+                                <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--info)', marginBottom: 2 }}>{CONCEPT_HIERARCHY.connectors[0].name}</div>
+                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{CONCEPT_HIERARCHY.connectors[0].desc}</div>
+                            </div>
+                        </div>
+
+                        {/* Landscape */}
+                        <h3 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 22, fontWeight: 700, marginTop: 40, marginBottom: 6 }}>The landscape today</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+                            There are several major <Tooltip term="LLM">LLMs</Tooltip> today, each accessed through different products. Here is who makes what and why it matters for you.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 40 }}>
+                            {TOOLS_DATA.map(tool => (
+                                <div key={tool.id} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+                                    <div onClick={() => setExpandedTool(expandedTool === tool.id ? null : tool.id)} style={{ padding: '18px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                                            <div style={{ width: 36, height: 36, borderRadius: 10, background: `${tool.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{Icons.understand(tool.color, 20)}</div>
+                                            <div>
+                                                <div style={{ fontWeight: 600, fontSize: 15 }}>{tool.name} <span style={{ fontWeight: 400, color: 'var(--text-tertiary)', fontSize: 13 }}>by {tool.provider}</span></div>
+                                                <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 2 }}>{tool.tagline}</div>
+                                            </div>
+                                        </div>
+                                        <span style={{ color: 'var(--text-tertiary)', fontSize: 18, transition: 'transform 0.2s', transform: expandedTool === tool.id ? 'rotate(180deg)' : 'none' }}>&#x25BE;</span>
+                                    </div>
+                                    {expandedTool === tool.id && (
+                                        <div style={{ padding: '0 20px 20px', borderTop: '1px solid var(--border-light)', paddingTop: 16 }}>
+                                            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 8 }}><strong>Best for:</strong> {tool.bestFor}</div>
+                                            <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}><strong>Latest <Tooltip term="Model">model</Tooltip>:</strong> {tool.latestModel}</div>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Product ecosystem</div>
+                                            {tool.ecosystem.map((p, i) => (
+                                                <div key={i} style={{ padding: '10px 14px', background: 'var(--bg-highlight)', borderRadius: 'var(--radius-sm)', marginBottom: 8, fontSize: 13 }}>
+                                                    <strong>{p.name}</strong><div style={{ color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.5 }}>{p.desc}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Industry Examples */}
+                        <h3 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 22, fontWeight: 700, marginBottom: 6 }}>AI at work across industries</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>Real companies using AI for real work today. Not hype, not prototypes.</p>
+                        {INDUSTRY_EXAMPLES.map((ind, i) => (
+                            <div key={i} style={{ marginBottom: 20 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                                    {Icons.industry("#C47035", 22)}
+                                    <span style={{ fontWeight: 700, fontSize: 15 }}>{ind.industry}</span>
+                                </div>
+                                {ind.examples.map((ex, j) => (
+                                    <div key={j} style={{ padding: '14px 18px', background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', marginBottom: 8, marginLeft: 32, boxShadow: 'var(--shadow-sm)' }}>
+                                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{ex.company}</div>
+                                        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{ex.what}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                        <NavFooter/>
+                    </div>
+                )}
+
+                {/* ===== APPLY ===== */}
+                {activeSection === "apply" && (
+                    <div className="animate-fade">
+                        <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>Tasks you can do today</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: 15 }}>
+                            Browse by category. Each task includes which tool works best and a <Tooltip term="Prompt">prompt</Tooltip> you can copy and use right away.
+                        </p>
+                        {Object.entries(TASKS).map(([category, tasks]) => (
+                            <div key={category} style={{ marginBottom: 28 }}>
+                                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>{category}</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    {tasks.map((t, i) => {
+                                        const key = `${category}-${i}`;
+                                        const isOpen = expandedTask === key;
+                                        return (
+                                            <div key={key} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', borderColor: isOpen ? 'var(--accent)' : 'var(--border)' }}>
+                                                <div onClick={() => setExpandedTask(isOpen ? null : key)} style={{ padding: '16px 18px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                    <div style={{ flex: 1 }}>
+                                                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{t.task}</div>
+                                                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                                                            {t.tools.map(tool => (<span key={tool} style={{ fontSize: 11, padding: '2px 8px', background: 'var(--bg-highlight)', borderRadius: 12, color: 'var(--text-secondary)', fontWeight: 500 }}>{tool}</span>))}
+                                                            <span style={{ fontSize: 11, padding: '2px 8px', background: t.difficulty === 'Beginner' ? 'var(--success-bg)' : t.difficulty === 'Advanced' ? '#FEF3E2' : 'var(--info-bg)', borderRadius: 12, color: t.difficulty === 'Beginner' ? 'var(--success)' : t.difficulty === 'Advanced' ? '#B8860B' : 'var(--info)', fontWeight: 500 }}>{t.difficulty}</span>
+                                                        </div>
+                                                    </div>
+                                                    <span style={{ color: 'var(--text-tertiary)', fontSize: 18, marginLeft: 12, transition: 'transform 0.2s', transform: isOpen ? 'rotate(180deg)' : 'none' }}>&#x25BE;</span>
+                                                </div>
+                                                {isOpen && (
+                                                    <div style={{ padding: '0 18px 16px', borderTop: '1px solid var(--border-light)', paddingTop: 14 }}>
+                                                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Starter prompt</div>
+                                                        <div style={{ background: 'var(--bg-highlight)', padding: '14px 16px', borderRadius: 'var(--radius-sm)', fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)', fontFamily: 'monospace', whiteSpace: 'pre-wrap', position: 'relative' }}>
+                                                            {t.prompt}
+                                                            <button onClick={(e) => { e.stopPropagation(); copyPrompt(t.prompt, key); }}
+                                                                style={{ position: 'absolute', top: 8, right: 8, padding: '5px 12px', fontSize: 11, background: copiedPrompt === key ? 'var(--success)' : 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                                {copiedPrompt === key ? Icons.check("#fff", 12) : Icons.copy("#fff", 12)} {copiedPrompt === key ? 'Copied' : 'Copy'}
+                                                            </button>
+                                                        </div>
+                                                        <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+                                                            Replace the [bracketed parts] with your actual content. The more specific you are, the better the result.
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+
+                        {/* Ask a question form */}
+                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-lg)', padding: '24px', marginTop: 16, marginBottom: 24, boxShadow: 'var(--shadow-sm)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                                {Icons.ask("#C47035", 24)}
+                                <h3 style={{ fontSize: 17, fontWeight: 700 }}>Have a specific problem in mind?</h3>
+                            </div>
+                            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 16, lineHeight: 1.6 }}>
+                                Is there something you are trying to solve but do not know where to start with AI? Describe it below and I will get back to you with ideas.
+                            </p>
+                            {!questionSent ? (
+                                <div>
+                                    <input type="text" placeholder="Your name" value={questionData.name} onChange={e => setQuestionData({...questionData, name: e.target.value})}
+                                        style={{ width: '100%', padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, marginBottom: 8, background: 'var(--bg-warm)', fontFamily: 'inherit', outline: 'none' }}/>
+                                    <input type="text" placeholder="Email or LinkedIn profile" value={questionData.contact} onChange={e => setQuestionData({...questionData, contact: e.target.value})}
+                                        style={{ width: '100%', padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, marginBottom: 8, background: 'var(--bg-warm)', fontFamily: 'inherit', outline: 'none' }}/>
+                                    <textarea placeholder="Describe the task or problem you want to solve with AI..." value={questionData.question} onChange={e => setQuestionData({...questionData, question: e.target.value})} rows={3}
+                                        style={{ width: '100%', padding: '12px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, marginBottom: 12, background: 'var(--bg-warm)', fontFamily: 'inherit', resize: 'vertical', outline: 'none' }}/>
+                                    <button onClick={() => {
+                                        if (questionData.question && questionData.contact) {
+                                            fetch("https://formspree.io/f/mvzvoenl", {
+                                                method: "POST", headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({ name: questionData.name, contact: questionData.contact, question: questionData.question, _subject: "Basecamp AI: New question" })
+                                            }).catch(() => {});
+                                            if (typeof gtag === 'function') gtag('event', 'question_submitted', { event_category: 'engagement' });
+                                            setQuestionSent(true);
+                                        }
+                                    }}
+                                        style={{ width: '100%', padding: '12px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                                        Send your question
+                                    </button>
+                                </div>
+                            ) : (
+                                <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                                    {Icons.apply("#4A8C6F", 36)}
+                                    <div style={{ fontWeight: 600, fontSize: 15, marginTop: 8 }}>Question received!</div>
+                                    <div style={{ color: 'var(--text-secondary)', fontSize: 13, marginTop: 4 }}>I will review it and get back to you soon.</div>
+                                </div>
+                            )}
+                        </div>
+
+                        <NavFooter/>
+                    </div>
+                )}
+
+                {/* ===== SETUP ===== */}
+                {activeSection === "setup" && (
+                    <div className="animate-fade">
+                        <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>Set up your AI toolkit</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 16, fontSize: 15 }}>Compare pricing, pick your tools and get started in minutes.</p>
+                        <div style={{ background: 'var(--bg-highlight)', borderRadius: 'var(--radius-sm)', padding: '12px 16px', marginBottom: 24, fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+                            Some links below are referral links. Using them helps offset the cost of maintaining this guide at no extra cost to you.
+                        </div>
+
+                        <div style={{ background: 'var(--accent-bg)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-lg)', padding: '22px', marginBottom: 32 }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Our recommendation to start</div>
+                            <p style={{ fontSize: 15, lineHeight: 1.7, marginBottom: 12 }}>
+                                Start with <strong>two free tools</strong>: one for thinking and working (<strong>Claude</strong> or <strong>ChatGPT</strong>) and one for research (<strong>Perplexity</strong>).
+                                Use them for a week on real tasks. Then decide if a paid tier is worth it based on how much you actually use them.
+                            </p>
+                            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>You do not need to pick "the best one." They each have strengths. Start with one and expand.</p>
+                        </div>
+
+                        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Pricing comparison</h3>
+                        {TOOLS_DATA.map(tool => (
+                            <div key={tool.id} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', marginBottom: 12, overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+                                <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: 8, background: `${tool.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{Icons.understand(tool.color, 18)}</div>
+                                        <span style={{ fontWeight: 700, fontSize: 16 }}>{tool.name}</span>
+                                    </div>
+                                    <a href={tool.referralUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent)', textDecoration: 'none', padding: '6px 14px', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-xl)' }}>Try it free</a>
+                                </div>
+                                <div style={{ display: 'flex', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                                    {tool.tiers.map((tier, i) => (
+                                        <div key={i} style={{ flex: '1 0 130px', padding: '16px', borderRight: i < tool.tiers.length - 1 ? '1px solid var(--border-light)' : 'none', position: 'relative' }}>
+                                            {tier.recommended && <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 10, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-bg)', padding: '2px 6px', borderRadius: 4 }}>POPULAR</div>}
+                                            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{tier.name}</div>
+                                            <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10, color: tier.price === "$0" ? 'var(--success)' : 'var(--text-primary)' }}>{tier.price}</div>
+                                            {tier.features.map((f, j) => (<div key={j} style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 4, paddingLeft: 12, position: 'relative' }}><span style={{ position: 'absolute', left: 0, color: 'var(--text-tertiary)' }}>&#xB7;</span>{f}</div>))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+
+                        <h3 style={{ fontSize: 18, fontWeight: 700, marginTop: 36, marginBottom: 16 }}>Get started in 3 steps</h3>
+                        {[
+                            { step: 1, title: "Download the app", desc: "Go to claude.ai, chatgpt.com, gemini.google.com or perplexity.ai. All have mobile apps in your app store." },
+                            { step: 2, title: "Create a free account", desc: "Sign up with your email or Google account. Start with the free tier. You can always upgrade later." },
+                            { step: 3, title: "Try your first real task", desc: "Go to the Apply tab, pick a task from your work, copy the starter prompt and customize it. Do not start with a toy example. Use something real." },
+                        ].map(s => (
+                            <div key={s.step} style={{ display: 'flex', gap: 16, marginBottom: 20, alignItems: 'flex-start' }}>
+                                <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--text-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>{s.step}</div>
+                                <div><div style={{ fontWeight: 600, fontSize: 15, marginBottom: 4 }}>{s.title}</div><div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{s.desc}</div></div>
+                            </div>
+                        ))}
+
+                        <h3 style={{ fontSize: 18, fontWeight: 700, marginTop: 40, marginBottom: 6 }}>For those who want to go deeper</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16 }}>More specialized tools worth knowing about.</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            {DEEP_DIVE_TOOLS.map((t, i) => (
+                                <div key={i} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '18px 20px', boxShadow: 'var(--shadow-sm)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                                        <span style={{ fontWeight: 600, fontSize: 15 }}>{t.name}</span>
+                                        <span style={{ fontSize: 11, padding: '2px 8px', background: 'var(--bg-highlight)', borderRadius: 12, color: 'var(--text-tertiary)', fontWeight: 500, flexShrink: 0 }}>{t.category}</span>
+                                    </div>
+                                    <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 6 }}>{t.desc}</div>
+                                    <div style={{ fontSize: 12, color: 'var(--text-tertiary)', fontWeight: 500 }}>{t.price}</div>
+                                </div>
+                            ))}
+                        </div>
+                        <NavFooter/>
+                    </div>
+                )}
+
+                {/* ===== GLOSSARY ===== */}
+                {activeSection === "glossary" && (
+                    <div className="animate-fade">
+                        <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>Speak the language</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: 15 }}>Key terms explained in plain English. These also appear as tooltips throughout the app.</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                            {Object.entries(GLOSSARY).sort((a, b) => a[0].localeCompare(b[0])).map(([term, def]) => (
+                                <div key={term} style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '16px 20px', boxShadow: 'var(--shadow-sm)' }}>
+                                    <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6, color: 'var(--accent)' }}>{term}</div>
+                                    <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{def}</div>
+                                </div>
+                            ))}
+                        </div>
+                        <NavFooter/>
+                    </div>
+                )}
+
+                {/* ===== CONNECT ===== */}
+                {activeSection === "connect" && (
+                    <div className="animate-fade">
+                        <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>You made it</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: 15, lineHeight: 1.7 }}>
+                            You now have the foundations to start using AI meaningfully in your work.
+                            The biggest step is the first real task you try, not the perfect tool or the perfect prompt.
+                        </p>
+
+                        {/* Quick wins recap */}
+                        <div style={{ background: 'var(--success-bg)', border: '1.5px solid var(--success)', borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: 24 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--success)', marginBottom: 12 }}>Your next 3 moves</div>
+                            {["Download one AI app (Claude or ChatGPT) right now", "Copy one prompt from the Apply tab and try it on a real task today", "After one week, decide if a $20/mo upgrade is worth it for you"].map((item, i) => (
+                                <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 8 }}>
+                                    <div style={{ width: 22, height: 22, borderRadius: '50%', border: '1.5px solid var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--success)', flexShrink: 0, marginTop: 1 }}>{i + 1}</div>
+                                    <span style={{ fontSize: 14, lineHeight: 1.5 }}>{item}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Contact form */}
+                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '24px', marginBottom: 28, boxShadow: 'var(--shadow-sm)' }}>
+                            <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 16 }}>Have you found it useful? Please let me know.</h3>
+                            <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginBottom: 20, lineHeight: 1.6 }}>
+                                I am building this for people who want to get started with AI.
+                                Your feedback helps me make it better.
+                            </p>
+                            {!contactSent ? (
+                                <div>
+                                    <input type="text" placeholder="Your name" value={contactData.name} onChange={e => setContactData({...contactData, name: e.target.value})}
+                                        style={{ width: '100%', padding: '14px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 15, marginBottom: 10, background: 'var(--bg-warm)', fontFamily: 'inherit', outline: 'none' }}/>
+                                    <input type="email" placeholder="Email address" value={contactData.email} onChange={e => setContactData({...contactData, email: e.target.value})}
+                                        style={{ width: '100%', padding: '14px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 15, marginBottom: 10, background: 'var(--bg-warm)', fontFamily: 'inherit', outline: 'none' }}/>
+                                    <textarea placeholder="What was most useful? What is missing? (optional)" value={contactData.message} onChange={e => setContactData({...contactData, message: e.target.value})} rows={3}
+                                        style={{ width: '100%', padding: '14px 16px', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 15, marginBottom: 16, background: 'var(--bg-warm)', fontFamily: 'inherit', resize: 'vertical', outline: 'none' }}/>
+                                    <button onClick={() => {
+                                        if (contactData.name || contactData.email) {
+                                            fetch("https://formspree.io/f/xjgpvnqb", {
+                                                method: "POST", headers: { "Content-Type": "application/json" },
+                                                body: JSON.stringify({ name: contactData.name, email: contactData.email, message: contactData.message, _subject: "Basecamp AI: New feedback" })
+                                            }).catch(() => {});
+                                            if (typeof gtag === 'function') gtag('event', 'feedback_submitted', { event_category: 'engagement' });
+                                            setContactSent(true);
+                                        }
+                                    }}
+                                        style={{ width: '100%', padding: '14px', background: 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>Share feedback</button>
+                                </div>
+                            ) : (
+                                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                                    {Icons.apply("#4A8C6F", 40)}
+                                    <div style={{ fontWeight: 600, fontSize: 16, marginTop: 8 }}>Thanks, {contactData.name}!</div>
+                                    <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Appreciate you sharing. Happy building.</div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* LinkedIn */}
+                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '24px', textAlign: 'center', boxShadow: 'var(--shadow-sm)', marginBottom: 24 }}>
+                            <p style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>I share practical AI tips and guides regularly</p>
+                            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16 }}>Follow along so you do not miss the next one.</p>
+                            <a href="https://www.linkedin.com/in/miloserdova/" target="_blank" rel="noopener noreferrer"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: '#0A66C2', color: '#fff', borderRadius: 'var(--radius-xl)', textDecoration: 'none', fontSize: 15, fontWeight: 600 }}>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                                Follow Olga on LinkedIn
+                            </a>
+                            <p style={{ marginTop: 12, fontSize: 13, color: 'var(--text-tertiary)' }}>Olga Miloserdova</p>
+                        </div>
+
+                        {/* Share the guide */}
+                        <div style={{ background: 'var(--bg-highlight)', borderRadius: 'var(--radius-lg)', padding: '20px', textAlign: 'center' }}>
+                            <p style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}>Know someone who would find this useful?</p>
+                            <button onClick={shareApp}
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-xl)', fontSize: 14, fontWeight: 500, cursor: 'pointer', color: 'var(--text-primary)' }}>
+                                {Icons.share("#C47035", 16)} Share this guide
+                            </button>
+                        </div>
+
+                        <NavFooter/>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>
