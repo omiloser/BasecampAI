@@ -230,6 +230,11 @@ const GLOSSARY = {
     "RAG": "Retrieval-Augmented Generation: AI that pulls in relevant documents before answering so its responses are grounded in your actual data rather than just its training.",
     "Inference": "The process of an AI generating a response to your input. When you send a message and wait for a reply, that is inference happening.",
     "Embedding": "A way AI converts text into numbers so it can measure how similar different pieces of text are. This powers search, recommendations and document organization.",
+    "Copilot": "An AI assistant embedded directly inside a tool you already use — Word, Excel, VS Code, Notion. It can see your document or code and acts as a smart co-worker inside your workflow.",
+    "AI Agent": "An AI that can plan and execute multi-step tasks on its own. You give it a goal; it figures out the steps, uses tools (web search, code execution, file access) and loops until the job is done.",
+    "Deep Research": "A mode in ChatGPT (and 'Research' mode in Claude) that spins up a background agent. Instead of one answer, the agent plans sub-questions, runs dozens of web searches, reads sources and synthesizes a full report. Can run for several minutes.",
+    "Tool use": "The ability of an AI model to call external tools — web search, code execution, a calculator, an API — mid-conversation. This is what turns a plain chatbot into something that can take action.",
+    "Agentic loop": "The cycle an AI agent runs: decide what to do → use a tool → look at the result → decide what to do next. Repeated until the task is complete or the agent decides it is done.",
 };
 
 const TASKS = {
@@ -492,6 +497,7 @@ function App() {
     const [showShareToast, setShowShareToast] = useState(false);
     const [showFactoid, setShowFactoid] = useState(null);
     const [seenFactoids, setSeenFactoids] = useState(new Set());
+    const [agentThread, setAgentThread] = useState(null); // null | "headphones" | "try"
 
     const showRandomFactoid = () => {
         const unseen = FACTOIDS.map((f, i) => i).filter(i => !seenFactoids.has(i));
@@ -654,6 +660,7 @@ function App() {
     // FIX: Removed "myths" as a separate hub tab. Myths are shown during onboarding and folded into the Understand section.
     const sections = [
         { id: "understand", label: "Understand", icon: "understand" },
+        { id: "agents", label: "Agents", icon: "hierarchy" },
         { id: "apply", label: "Apply", icon: "apply" },
         { id: "setup", label: "Set up", icon: "setup" },
         { id: "glossary", label: "Glossary", icon: "glossary" },
@@ -877,6 +884,175 @@ function App() {
                     </div>
                 )}
 
+                {/* ===== AGENTS ===== */}
+                {activeSection === "agents" && (
+                    <div className="animate-fade">
+
+                        {/* Side-thread: headphones */}
+                        {agentThread === "headphones" && (
+                            <div>
+                                <button onClick={() => setAgentThread(null)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>{Icons.back("#C47035", 16)} Back to Agents &amp; Copilots</button>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Side note</div>
+                                <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 700, marginBottom: 12 }}>What Deep Research actually does</h2>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 24, lineHeight: 1.7 }}>When you ask it to compare three noise-cancelling headphones, here is what is happening while you wait.</p>
+                                {[
+                                    { n: 1, title: "Breaks the task into sub-questions.", body: "Price. Sound quality. Comfort. Battery life. Noise cancellation strength. Build quality. Six angles, not one vague question." },
+                                    { n: 2, title: "Runs 30–80 web searches.", body: "One round per sub-question, then more as it finds things worth double-checking or conflicting sources to resolve." },
+                                    { n: 3, title: "Opens dozens of review sites.", body: "Reads the actual article content, not just the search snippet. Skips the ads. Compares what different reviewers say about the same thing." },
+                                    { n: 4, title: "Takes notes as it goes.", body: "Keeps a running record of which headphone is praised for what, by whom, and how recently — so the final comparison is grounded in evidence." },
+                                    { n: 5, title: "Notices contradictions and resolves them.", body: "\"One review says 30-hour battery, another says 22.\" The agent runs more targeted searches until it knows which figure to trust." },
+                                    { n: 6, title: "Writes the comparison. Only now.", body: "By the time you see a single word, the agent has made hundreds of small decisions. You pressed one button." },
+                                ].map((s, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: 16, marginBottom: 16, alignItems: 'flex-start' }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--accent)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{s.n}</div>
+                                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '14px 16px', flex: 1, boxShadow: 'var(--shadow-sm)' }}>
+                                            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{s.title}</div>
+                                            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{s.body}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div style={{ background: 'var(--accent-bg)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-lg)', padding: '20px 24px', margin: '8px 0 28px', fontFamily: "'Source Serif 4', serif", fontSize: 18, lineHeight: 1.5, color: 'var(--text-primary)' }}>
+                                    You pressed one button. The agent took hundreds of small steps. That is the <Tooltip term="Agentic loop">agentic loop</Tooltip>.
+                                </div>
+                                <button onClick={() => setAgentThread(null)} style={{ width: '100%', padding: '14px', background: 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>{Icons.back("#fff", 16)} Back to where you were</button>
+                            </div>
+                        )}
+
+                        {/* Side-thread: try it */}
+                        {agentThread === "try" && (
+                            <div>
+                                <button onClick={() => setAgentThread(null)} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>{Icons.back("#C47035", 16)} Back to Agents &amp; Copilots</button>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Side note</div>
+                                <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 700, marginBottom: 12 }}>Try it yourself in 10 minutes</h2>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 16, lineHeight: 1.7 }}>One experiment that makes the three modes impossible to confuse ever again. Pick a question where you genuinely do not know the answer — something like:</p>
+                                <div style={{ background: 'var(--accent-bg)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-md)', padding: '16px 20px', marginBottom: 24, fontFamily: "'Source Serif 4', serif", fontSize: 16, lineHeight: 1.6, color: 'var(--text-primary)' }}>
+                                    "What are the three most reliable mid-priced espresso machines I can buy right now, and what are people complaining about?"
+                                </div>
+                                <p style={{ color: 'var(--text-secondary)', fontSize: 15, marginBottom: 16 }}>Ask it three different ways:</p>
+                                {[
+                                    { n: 1, title: "Plain chat — no web search.", body: "Notice how the model answers from memory. It may hedge or admit it is out of date. That is Mode 1." },
+                                    { n: 2, title: "Chat with web search toggled on.", body: "Watch for the small 'searching the web…' indicator. The answer gets more current and specific. That is Mode 2." },
+                                    { n: 3, title: "Deep Research (ChatGPT) or Research (Claude).", body: "Walk away. Come back in 5–10 minutes. You will get a structured report with citations. That is Mode 3 — the agent loop running." },
+                                ].map((s, i) => (
+                                    <div key={i} style={{ display: 'flex', gap: 16, marginBottom: 14, alignItems: 'flex-start' }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--text-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{s.n}</div>
+                                        <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '14px 16px', flex: 1, boxShadow: 'var(--shadow-sm)' }}>
+                                            <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{s.title}</div>
+                                            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{s.body}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 8, marginBottom: 28, lineHeight: 1.7 }}>Compare the three answers. You will never confuse the modes again — because you have now felt the difference, not just read about it.</p>
+                                <button onClick={() => setAgentThread(null)} style={{ width: '100%', padding: '14px', background: 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-xl)', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>{Icons.back("#fff", 16)} Back to where you were</button>
+                            </div>
+                        )}
+
+                        {/* Main spine */}
+                        {!agentThread && (
+                            <div>
+                                <h2 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, marginBottom: 6 }}>Agents &amp; Copilots</h2>
+                                <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: 15, lineHeight: 1.7 }}>Same chat box. Three very different things happening behind it — and most people never notice the difference.</p>
+
+                                {/* Three modes */}
+                                <h3 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 20, fontWeight: 700, marginBottom: 16 }}>The three modes</h3>
+                                {[
+                                    {
+                                        tag: "Mode 1 · Plain chat",
+                                        title: "Just the model",
+                                        body: "The model answers from what it learned during training. No internet, no tools. One step, seconds. Good for explanations, drafting, brainstorming — anything where you do not need fresh facts.",
+                                        dots: 1, time: "One step · seconds", color: "var(--text-secondary)"
+                                    },
+                                    {
+                                        tag: "Mode 2 · Chat + web search",
+                                        title: "The model, with a lookup",
+                                        body: "The model does one or a few quick web searches mid-answer, then replies. Still a single back-and-forth, still seconds. Good for current events, prices, finding a specific source. Watch for the small 'searching…' indicator.",
+                                        dots: 3, time: "A few steps · still seconds", color: "var(--info)"
+                                    },
+                                    {
+                                        tag: "Mode 3 · Deep Research / Agent",
+                                        title: "A background agent",
+                                        body: "Pick 'Deep Research' in ChatGPT or 'Research' in Claude and the product spins up an agent in the background. It plans sub-questions, runs many searches, opens pages, takes notes, refines its plan and only then writes the report. You can close the tab and come back. This is what people mean when they say 'AI agent' — a loop that plans and acts on its own, over many steps, toward a goal.",
+                                        dots: 7, time: "Dozens of steps · many minutes", color: "var(--accent)"
+                                    },
+                                ].map((m, i) => (
+                                    <div key={i} style={{ background: 'var(--bg-card)', border: `1.5px solid ${i === 2 ? 'var(--accent)' : 'var(--border)'}`, borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: 12, boxShadow: 'var(--shadow-sm)' }}>
+                                        <div style={{ fontSize: 11, fontWeight: 700, color: i === 2 ? 'var(--accent)' : 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>{m.tag}</div>
+                                        <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{m.title}</div>
+                                        <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 12 }}>{m.body}</div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            {Array.from({ length: Math.min(m.dots, 7) }).map((_, j) => (
+                                                <div key={j} style={{ width: 6, height: 6, borderRadius: '50%', background: m.color, opacity: j < m.dots ? 1 - j * (m.dots > 3 ? 0.1 : 0) : 0.2 }}/>
+                                            ))}
+                                            {m.dots > 7 && <span style={{ fontSize: 13, color: m.color, fontWeight: 700 }}>…</span>}
+                                            <span style={{ fontSize: 12, color: 'var(--text-tertiary)', marginLeft: 4 }}>{m.time}</span>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* Side-thread cards */}
+                                <p style={{ fontSize: 14, color: 'var(--text-secondary)', margin: '20px 0 12px', lineHeight: 1.6 }}>
+                                    That is what people mean by an <Tooltip term="AI Agent">AI agent</Tooltip> — a loop that plans and acts on its own, over many steps. Not a different product. The same chat box with a different button.
+                                </p>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
+                                    <button onClick={() => { setAgentThread("headphones"); scrollToTop(); if (typeof gtag === 'function') gtag('event', 'agent_thread', { event_category: 'engagement', thread: 'headphones' }); }}
+                                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '16px 18px', background: 'var(--accent-bg)', border: '1.5px solid var(--accent)', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'inherit' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                            {Icons.search("#C47035", 20)}
+                                            <div>
+                                                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>See what Deep Research actually does</div>
+                                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>The headphones example, step by step</div>
+                                            </div>
+                                        </div>
+                                        {Icons.forward("#C47035", 18)}
+                                    </button>
+                                    <button onClick={() => { setAgentThread("try"); scrollToTop(); if (typeof gtag === 'function') gtag('event', 'agent_thread', { event_category: 'engagement', thread: 'try' }); }}
+                                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '16px 18px', background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'inherit' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                            {Icons.apply("#C47035", 20)}
+                                            <div>
+                                                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>Try it yourself in 10 minutes</div>
+                                                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Same question, three modes — feel the difference</div>
+                                            </div>
+                                        </div>
+                                        {Icons.forward("#C47035", 18)}
+                                    </button>
+                                </div>
+
+                                {/* Copilots */}
+                                <h3 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 20, fontWeight: 700, marginBottom: 10 }}>Where <Tooltip term="Copilot">copilots</Tooltip> fit in</h3>
+                                <div style={{ background: 'var(--bg-card)', border: '1.5px solid var(--border)', borderRadius: 'var(--radius-md)', padding: '20px', marginBottom: 12, boxShadow: 'var(--shadow-sm)' }}>
+                                    <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 12 }}>
+                                        A <strong>copilot</strong> — Microsoft Copilot in Word, GitHub Copilot in VS Code, Notion AI in Notion — is the same idea as a chatbot but <em>embedded inside a tool you already use</em>, with access to your document, spreadsheet or codebase. Most copilots behave like Mode 1 or Mode 2 today. The line between copilot and agent is blurring fast.
+                                    </p>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                        {[
+                                            { name: "Microsoft Copilot", where: "Word, Excel, PowerPoint, Outlook, Teams", best: "Drafting, summarising, data extraction inside Microsoft 365" },
+                                            { name: "GitHub Copilot", where: "VS Code and JetBrains IDEs", best: "Writing, completing and explaining code" },
+                                            { name: "Notion AI", where: "Notion pages and databases", best: "Summarising notes, drafting content, structuring information" },
+                                        ].map((c, i) => (
+                                            <div key={i} style={{ padding: '12px 14px', background: 'var(--bg-highlight)', borderRadius: 'var(--radius-sm)', fontSize: 13 }}>
+                                                <div style={{ fontWeight: 600, marginBottom: 2 }}>{c.name}</div>
+                                                <div style={{ color: 'var(--text-tertiary)', fontSize: 12, marginBottom: 4 }}>In: {c.where}</div>
+                                                <div style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>Best for: {c.best}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Why it matters */}
+                                <div style={{ background: 'var(--info-bg)', border: '1.5px solid var(--info)', borderRadius: 'var(--radius-md)', padding: '18px 20px', marginBottom: 24 }}>
+                                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--info)', marginBottom: 8 }}>Why this distinction matters for you</div>
+                                    <div style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                                        If you only ever use plain chat, you are getting maybe 20% of what these tools can do. Knowing the three modes — and which button switches between them — is the single biggest practical unlock for non-technical users.
+                                    </div>
+                                </div>
+
+                                <NavFooter/>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {/* ===== APPLY ===== */}
                 {activeSection === "apply" && (
                     <div className="animate-fade">
@@ -906,12 +1082,16 @@ function App() {
                                                 {isOpen && (
                                                     <div style={{ padding: '0 18px 16px', borderTop: '1px solid var(--border-light)', paddingTop: 14 }}>
                                                         <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Starter prompt</div>
-                                                        <div style={{ background: 'var(--bg-highlight)', padding: '14px 16px', borderRadius: 'var(--radius-sm)', fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)', fontFamily: 'monospace', whiteSpace: 'pre-wrap', position: 'relative' }}>
-                                                            {t.prompt}
-                                                            <button onClick={(e) => { e.stopPropagation(); copyPrompt(t.prompt, key); }}
-                                                                style={{ position: 'absolute', top: 8, right: 8, padding: '5px 12px', fontSize: 11, background: copiedPrompt === key ? 'var(--success)' : 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                                {copiedPrompt === key ? Icons.check("#fff", 12) : Icons.copy("#fff", 12)} {copiedPrompt === key ? 'Copied' : 'Copy'}
-                                                            </button>
+                                                        <div style={{ background: 'var(--bg-highlight)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
+                                                            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 10px 0' }}>
+                                                                <button onClick={(e) => { e.stopPropagation(); copyPrompt(t.prompt, key); }}
+                                                                    style={{ padding: '5px 12px', fontSize: 11, background: copiedPrompt === key ? 'var(--success)' : 'var(--text-primary)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                                    {copiedPrompt === key ? Icons.check("#fff", 12) : Icons.copy("#fff", 12)} {copiedPrompt === key ? 'Copied' : 'Copy'}
+                                                                </button>
+                                                            </div>
+                                                            <div style={{ padding: '8px 16px 14px', fontSize: 13, lineHeight: 1.6, color: 'var(--text-secondary)', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
+                                                                {t.prompt}
+                                                            </div>
                                                         </div>
                                                         <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
                                                             Replace the [bracketed parts] with your actual content. The more specific you are, the better the result.
