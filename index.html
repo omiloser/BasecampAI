@@ -558,7 +558,7 @@ function App() {
     };
 
     const closeAgentThread = () => {
-        closeAgentThread();
+        setAgentThread(null);
         scrollToTop();
         setTimeout(scrollToTop, 60);
     };
