@@ -607,7 +607,7 @@ function App() {
         };
         return (
             <div>
-                <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px 24px', textAlign: 'center' }}>
+                <div style={{ minHeight: 'max(520px, calc(100vh - 140px))', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px 24px 24px', textAlign: 'center' }}>
                     <div className="animate-in" style={{ maxWidth: 520 }}>
                         <div style={{ marginBottom: 24 }}>{Icons.understand("#C47035", 56)}</div>
                         <h1 style={{ fontFamily: "'Source Serif 4', serif", fontSize: 'clamp(28px, 6vw, 40px)', fontWeight: 700, lineHeight: 1.2, marginBottom: 12 }}>Basecamp AI</h1>
@@ -631,7 +631,7 @@ function App() {
                     </div>
                 </div>
                 <div style={{ padding: '0 24px 80px', maxWidth: 560, margin: '0 auto' }}>
-                    <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: 40 }}>
+                    <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: 24 }}>
                         <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6, textAlign: 'center' }}>Recently shipped</p>
                         <p style={{ fontSize: 14, color: 'var(--text-secondary)', textAlign: 'center', marginBottom: 28 }}>Built in the open, based on what readers ask for.</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
